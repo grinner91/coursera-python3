@@ -1,4 +1,9 @@
+'''
 
+"Data Collection and Processing with Python"
+Final Project for Course 3 - OMDB and TasteDive Mashup
+
+'''
 
 import requests_with_caching
 import json
