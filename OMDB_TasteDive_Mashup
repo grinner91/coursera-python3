@@ -1,3 +1,6 @@
+
+```python 
+
 import requests_with_caching
 import json
 import time
@@ -69,3 +72,5 @@ t1 = time.time()
 #get_sorted_recommendations(["Bridesmaids", "Sherlock Holmes"])
 t2 = time.time()
 print('time diff: ', t2 - t1)
+
+```
