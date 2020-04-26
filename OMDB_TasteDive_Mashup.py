@@ -1,5 +1,4 @@
 
-```
 
 import requests_with_caching
 import json
@@ -73,4 +72,3 @@ t1 = time.time()
 t2 = time.time()
 print('time diff: ', t2 - t1)
 
-```
