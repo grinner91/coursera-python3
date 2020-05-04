@@ -19,7 +19,7 @@
 # 
 # Note: That big file can take some time to process - for me it took nearly ten minutes! Use the small one for testing.
 
-# In[2]:
+# In[14]:
 
 
 import zipfile
@@ -29,18 +29,10 @@ import cv2 as cv
 import numpy as np
 
 
-
-
-# In[3]:
-
-
 # loading the face detection classifier
 face_cascade = cv.CascadeClassifier('readonly/haarcascade_frontalface_default.xml')
 
-
-# In[4]:
-
-
+#############################################
 zip_small_files_name = 'readonly/small_img.zip'
 zip_big_files_name = 'readonly/images.zip'
 # the rest is up to you!
@@ -56,10 +48,6 @@ def unzip_imagefiles():
                 #print('image added to dictionary')
     return images_dict
 
-
-# In[5]:
-
-
 #####################
 def parse_text_and_update(images):
     print('parsing texts...')
@@ -71,10 +59,7 @@ def parse_text_and_update(images):
         
     return images
 
-
-# In[6]:
-
-
+#####################################
 def detect_faces_and_update(images):
     print('creating faces box ....')
     for fname in images.keys():
@@ -85,18 +70,16 @@ def detect_faces_and_update(images):
     
         for x,y,w,h in faces_boxs:
             img = images[fname]['imgkey']
-            fc = img.crop((x,y,x+w,y+h))
-            faces.append(fc)
+            fcimg = img.crop((x,y,x+w,y+h))
+            #fcimg = fcimg.thumbnail((100,100),Image.ANTIALIAS)
+            faces.append(fcimg)
         
         images[fname]['faces'] = faces
         print('fname: ', fname, ' faces count: ', len(faces))
     
     return images
 
-
-# In[7]:
-
-
+########################################
 def create_thumbnail_and_update(images):
     print('creating thumnail...')
     for imgname in images.keys():
@@ -105,21 +88,19 @@ def create_thumbnail_and_update(images):
 
     return images
 
-
-# In[8]:
-
-
+#########################################
 def create_contact_sheet(imgname, imgdict, srtxt): 
     print('creating contact sheet... ',srtxt)
     if srtxt in imgdict['text'] and len(imgdict['faces']) > 0:
         print("Result found in file {}".format(imgname))
-        h = int(len(imgdict['faces']) // 5)
-        contact_sheet = Image.new('RGB',(500, 100 * h))
+        h = int(np.ceil(len(imgdict['faces']) / 5)) * 100
+        w = 500
+        contact_sheet = Image.new('RGB', (w, h))
         x = 0
         y = 0
         for fc in imgdict['faces']:
-            contact_sheet.paste(fc,(x,y))
-            if x + 100 == contact_sheet.width:
+            contact_sheet.paste(fc, (x,y))
+            if x + 100 >= contact_sheet.width:
                 x = 0
                 y += 100
             else: x += 100
@@ -134,14 +115,15 @@ def searchText(images, srtxt):
     for filename in images.keys():
         create_contact_sheet(filename, images[filename], srtxt)
 
+
+
+# In[15]:
+
+
 #########################
-
-
-# In[9]:
-
-
 import time
 t1 = time.time()
+print('start processing...\n\n')
 ######################
 images_dict = unzip_imagefiles()
 t2 = time.time()
@@ -155,20 +137,23 @@ images_dict = detect_faces_and_update(images_dict)
 t2 = time.time()
 print('procesing time(mins): ', (t2-t1)//60,'\n')
 
+
 images_dict = create_thumbnail_and_update(images_dict)
 t2 = time.time()
 print('procesing time(mins): ', (t2-t1)//60,'\n')
+
 
 #print(images_dict)
 searchText(images_dict, 'Christopher') 
 t2 = time.time()
 print('total procesing time(mins): ', (t2-t1)//60,'\n')
+print('finished processing...\n\n')
 #searchText(images_dict, 'Mark')  
 #searchText(images_dict, 'pizza')  
     
 
 
-# In[10]:
+# In[16]:
 
 
 searchText(images_dict, 'Mark') 
@@ -176,7 +161,7 @@ t2 = time.time()
 print('total procesing time(mins): ', (t2-t1)//60,'\n')
 
 
-# In[11]:
+# In[17]:
 
 
 searchText(images_dict, 'pizza') 
